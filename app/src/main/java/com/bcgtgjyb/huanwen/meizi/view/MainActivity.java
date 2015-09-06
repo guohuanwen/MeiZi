@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.bcgtgjyb.huanwen.meizi.view.adapter.PhotoRecyclerAdapter;
+import com.bcgtgjyb.huanwen.meizi.view.tools.MyApplication;
+import com.bcgtgjyb.huanwen.meizi.view.tools.MyTime;
 import com.ikimuhendis.ldrawer.ActionBarDrawerToggle;
 import com.ikimuhendis.ldrawer.DrawerArrowDrawable;
 
@@ -38,6 +41,8 @@ public class MainActivity extends Activity {
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerArrowDrawable drawerArrow;
     private boolean drawerArrowColor;
+    private final String TAG="MainActivity";
+    private MyApplication myApplication=new MyApplication();
 
     private ArrayList initUrlList(){
         ArrayList arrayList=new ArrayList();
@@ -147,7 +152,14 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        Log.i(TAG, "init  "+new MyTime().translateTime(""));
+//        json();
     }
+
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
