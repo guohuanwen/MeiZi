@@ -14,6 +14,8 @@ public class FuliDetil {
     private String createdAt;
     private String updatedAt;
 
+
+
     public String getCreatedAt() {
         return createdAt;
     }

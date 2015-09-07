@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 import me.itangqi.greendao.DaoMaster;
 import me.itangqi.greendao.DaoSession;
 
@@ -21,6 +24,7 @@ public class MyApplication extends Application{
         super.onCreate();
         context=getApplicationContext();
         setupDatabase();
+        initImageLoad();
     }
 
     public static Context getContext(){
@@ -33,6 +37,18 @@ public class MyApplication extends Application{
 
     public static SQLiteDatabase getDb(){
         return db;
+    }
+
+
+
+    private void initImageLoad(){
+        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(this)
+                .diskCacheSize(1024*1024*60)
+                .memoryCacheSize(1024*1024*60)
+                .diskCacheFileCount(100)
+                // 添加你的配置需求
+                .build();
+        ImageLoader.getInstance().init(configuration);
     }
 
     private void setupDatabase() {

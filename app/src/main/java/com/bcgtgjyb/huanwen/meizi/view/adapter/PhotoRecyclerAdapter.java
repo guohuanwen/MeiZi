@@ -8,12 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.bcgtgjyb.huanwen.meizi.view.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by huanwen on 2015/9/4.
@@ -23,12 +24,17 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private Context context;
     private final LayoutInflater layoutInflater;
     private ImageLoader imageLoader;
-    private ArrayList list;
-    public PhotoRecyclerAdapter(Context context,ArrayList list) {
+    private List list;
+    DisplayImageOptions options;
+    public PhotoRecyclerAdapter(Context context,List list) {
         this.context=context;
         layoutInflater=LayoutInflater.from(context);
         this.list=list;
-
+         options=new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+        imageLoader=ImageLoader.getInstance();
     }
 
     @Override
@@ -45,19 +51,27 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 //            "drawable://" + R.drawable.img // from drawables (non-9patch images)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-        imageLoader=ImageLoader.getInstance();
-        imageLoader.init(ImageLoaderConfiguration.createDefault(context));
-        ImageView imageView=((PhotoHolder) holder).imageView;
-
-        Log.i(TAG, "onBindViewHolder "+(String)list.get(position));
-        imageLoader.displayImage((String) list.get(position), imageView);
+        final ImageView imageView=((PhotoHolder) holder).imageView;
+        Log.i(TAG, "onBindViewHolder " + (String) list.get(position));
+        imageLoader.displayImage((String) list.get(position), imageView,options);
         imageLoader.loadImage((String) list.get(position), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 // Do whatever you want with Bitmap
+//                imageView.setImageBitmap(loadedImage);
+
             }
         });
+    }
+
+    public void deleteView(){
+
+    }
+
+    public void addView(List url){
+        list.clear();
+        list=url;
+        notifyItemInserted(0);
     }
 
     @Override

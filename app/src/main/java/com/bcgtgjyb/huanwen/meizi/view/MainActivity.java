@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -18,8 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.bcgtgjyb.huanwen.meizi.view.adapter.PhotoRecyclerAdapter;
-import com.bcgtgjyb.huanwen.meizi.view.tools.MyApplication;
-import com.bcgtgjyb.huanwen.meizi.view.tools.MyTime;
+import com.bcgtgjyb.huanwen.meizi.view.presenter.MainPresenter;
+import com.bcgtgjyb.huanwen.meizi.view.widget.MySwipeRefreshLayout;
 import com.ikimuhendis.ldrawer.ActionBarDrawerToggle;
 import com.ikimuhendis.ldrawer.DrawerArrowDrawable;
 
@@ -28,10 +29,13 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {
 
+    @ViewById
+    MySwipeRefreshLayout swipeRefreshLayout;
     @ViewById
     DrawerLayout mDrawerLayout;
     @ViewById
@@ -42,27 +46,35 @@ public class MainActivity extends Activity {
     private DrawerArrowDrawable drawerArrow;
     private boolean drawerArrowColor;
     private final String TAG="MainActivity";
-    private MyApplication myApplication=new MyApplication();
+    private PhotoRecyclerAdapter photoRecyclerAdapter;
+    private MainPresenter mainPresenter;
 
-    private ArrayList initUrlList(){
-        ArrayList arrayList=new ArrayList();
-        for(int i=0;i<500;i++){
-            arrayList.add("drawable://"+R.drawable.ic_launcher);
-        }
-        return  arrayList;
-
+    @AfterViews
+    void ininPresenter(){
+        if(mainPresenter==null) mainPresenter=new MainPresenter();
+        mainPresenter.takeView(this);
     }
 
     @AfterViews
-    void init() {
+    void  initMeiZiList(){
+        photoRecyclerAdapter=new PhotoRecyclerAdapter(this,new ArrayList<String>());
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
+        recyclerView.setAdapter(photoRecyclerAdapter);
+        mainPresenter.initRecycler();
+    }
+
+    @AfterViews
+    void initSwipRefresh(){
+        Log.i(TAG, "initSwipRefresh " + Thread.currentThread().getName());
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.actionbar_color));
+        swipeRefreshLayout.setOnRefreshListener(new RefreshListener());
+    }
+
+    @AfterViews
+    void initDrawer() {
         ActionBar ab = getActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeButtonEnabled(true);
-
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
-        recyclerView.setAdapter(new PhotoRecyclerAdapter(this,initUrlList()));
-
-
         drawerArrow = new DrawerArrowDrawable(this) {
             @Override
             public boolean isLayoutRtl() {
@@ -152,10 +164,34 @@ public class MainActivity extends Activity {
 
             }
         });
-
-        Log.i(TAG, "init  "+new MyTime().translateTime(""));
 //        json();
+//
+
     }
+
+    private class RefreshListener implements MySwipeRefreshLayout.OnRefreshListener{
+        @Override
+        public void onRefresh() {
+            mainPresenter.refreshUrl();
+        }
+    }
+
+
+
+    @MainThread
+    public void setRecyclerViewAdapter(List list){
+        Log.i(TAG, "setRecyclerViewAdapter "+Thread.currentThread().getName());
+        photoRecyclerAdapter.addView(list);
+    }
+
+
+
+    @MainThread
+    public void closeSwipeRefreshLayout(){
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+
 
 
 

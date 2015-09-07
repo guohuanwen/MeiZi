@@ -25,6 +25,7 @@ public class Fuli {
     private String createdAt;
     /** Not-null value. */
     private String updatedAt;
+    private long nextId;
 
     public Fuli() {
     }
@@ -33,7 +34,7 @@ public class Fuli {
         this.id = id;
     }
 
-    public Fuli(Long id, String who, String publishedAt, String desc, String type, String url, String used, String objectId, String createdAt, String updatedAt) {
+    public Fuli(Long id, String who, String publishedAt, String desc, String type, String url, String used, String objectId, String createdAt, String updatedAt, long nextId) {
         this.id = id;
         this.who = who;
         this.publishedAt = publishedAt;
@@ -44,6 +45,7 @@ public class Fuli {
         this.objectId = objectId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.nextId = nextId;
     }
 
     public Long getId() {
@@ -142,6 +144,14 @@ public class Fuli {
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public long getNextId() {
+        return nextId;
+    }
+
+    public void setNextId(long nextId) {
+        this.nextId = nextId;
     }
 
 }
