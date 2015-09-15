@@ -34,6 +34,7 @@ public class FuliDao extends AbstractDao<Fuli, Long> {
         public final static Property CreatedAt = new Property(8, String.class, "createdAt", false, "CREATED_AT");
         public final static Property UpdatedAt = new Property(9, String.class, "updatedAt", false, "UPDATED_AT");
         public final static Property NextId = new Property(10, long.class, "nextId", false, "NEXT_ID");
+        public final static Property Count = new Property(11, long.class, "count", false, "COUNT");
     };
 
 
@@ -59,7 +60,8 @@ public class FuliDao extends AbstractDao<Fuli, Long> {
                 "'OBJECT_ID' TEXT NOT NULL ," + // 7: objectId
                 "'CREATED_AT' TEXT NOT NULL ," + // 8: createdAt
                 "'UPDATED_AT' TEXT NOT NULL ," + // 9: updatedAt
-                "'NEXT_ID' INTEGER NOT NULL );"); // 10: nextId
+                "'NEXT_ID' INTEGER NOT NULL ," + // 10: nextId
+                "'COUNT' INTEGER NOT NULL );"); // 11: count
     }
 
     /** Drops the underlying database table. */
@@ -87,6 +89,7 @@ public class FuliDao extends AbstractDao<Fuli, Long> {
         stmt.bindString(9, entity.getCreatedAt());
         stmt.bindString(10, entity.getUpdatedAt());
         stmt.bindLong(11, entity.getNextId());
+        stmt.bindLong(12, entity.getCount());
     }
 
     /** @inheritdoc */
@@ -109,7 +112,8 @@ public class FuliDao extends AbstractDao<Fuli, Long> {
             cursor.getString(offset + 7), // objectId
             cursor.getString(offset + 8), // createdAt
             cursor.getString(offset + 9), // updatedAt
-            cursor.getLong(offset + 10) // nextId
+            cursor.getLong(offset + 10), // nextId
+            cursor.getLong(offset + 11) // count
         );
         return entity;
     }
@@ -128,6 +132,7 @@ public class FuliDao extends AbstractDao<Fuli, Long> {
         entity.setCreatedAt(cursor.getString(offset + 8));
         entity.setUpdatedAt(cursor.getString(offset + 9));
         entity.setNextId(cursor.getLong(offset + 10));
+        entity.setCount(cursor.getLong(offset + 11));
      }
     
     /** @inheritdoc */

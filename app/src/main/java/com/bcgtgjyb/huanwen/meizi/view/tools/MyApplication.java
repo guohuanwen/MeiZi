@@ -3,6 +3,7 @@ package com.bcgtgjyb.huanwen.meizi.view.tools;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -15,30 +16,30 @@ import me.itangqi.greendao.DaoSession;
  */
 public class MyApplication extends Application{
     private static Context context;
-    private DaoMaster daoMaster;
+    private static DaoMaster daoMaster;
     private static DaoSession daoSession;
     private static SQLiteDatabase db;
+    private static MyApplication myApplication;
+    private static final String TAG="MyApplication";
+
+//    private MyApplication(){
+//
+//    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         context=getApplicationContext();
-        setupDatabase();
         initImageLoad();
     }
+
+//    public synchronized static MyApplication getInstence(){
+//        return get;
+//    }
 
     public static Context getContext(){
         return context;
     }
-
-    public static DaoSession getDaoSession(){
-        return daoSession;
-    }
-
-    public static SQLiteDatabase getDb(){
-        return db;
-    }
-
 
 
     private void initImageLoad(){
@@ -52,6 +53,7 @@ public class MyApplication extends Application{
     }
 
     private void setupDatabase() {
+        Log.i(TAG, "setupDatabase ");
         // 通过 DaoMaster 的内部类 DevOpenHelper，你可以得到一个便利的 SQLiteOpenHelper 对象。
         // 可能你已经注意到了，你并不需要去编写「CREATE TABLE」这样的 SQL 语句，因为 greenDAO 已经帮你做了。
         // 注意：默认的 DaoMaster.DevOpenHelper 会在数据库升级时，删除所有的表，意味着这将导致数据的丢失。
@@ -61,6 +63,34 @@ public class MyApplication extends Application{
         // 注意：该数据库连接属于 DaoMaster，所以多个 Session 指的是相同的数据库连接。
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
+    }
+
+    /**
+     * 取得DaoMaster
+     *
+     * @return
+     */
+    public static DaoMaster getDaoMaster(Context context) {
+        if (daoMaster == null) {
+            Log.i(TAG, "getDaoMaster " +context);
+            DaoMaster.OpenHelper helper = new DaoMaster.DevOpenHelper(context,"notes-db" ,null);
+            daoMaster = new DaoMaster(helper.getWritableDatabase());
+        }
+        return daoMaster;
+    }
+
+    /**
+     * 取得DaoSession
+     * @return
+     */
+    public static DaoSession getDaoSession(Context context) {
+        if (daoSession == null) {
+            if (daoMaster == null) {
+                daoMaster = getDaoMaster(context);
+            }
+            daoSession = daoMaster.newSession();
+        }
+        return daoSession;
     }
 
     private void addTable(){

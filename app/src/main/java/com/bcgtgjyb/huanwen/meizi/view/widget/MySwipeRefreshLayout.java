@@ -657,6 +657,10 @@ public class MySwipeRefreshLayout extends ViewGroup implements NestedScrollingPa
             mReturningToStart = false;
         }
 
+//        if (mReturningToStart && action == MotionEvent.ACTION_UP) {
+//            mReturningToStart = false;
+//        }
+
         if ((!isEnabled() || mReturningToStart || canChildScrollUp() || mRefreshing)) {
             // Fail fast if we're not in a state where a swipe is possible
             return false;

@@ -6,4 +6,5 @@
     <string name="drawer_close">close</string>
     <string name="drawer_open">open</string>
     <string name="app_description">ddd</string>
+    <string name="recycle_foot">加载中...</string>
 </resources>

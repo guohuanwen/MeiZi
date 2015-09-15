@@ -2,11 +2,11 @@ package com.bcgtgjyb.huanwen.meizi.view;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.bcgtgjyb.huanwen.meizi.view.adapter.PhotoRecyclerAdapter;
 import com.bcgtgjyb.huanwen.meizi.view.presenter.MainPresenter;
@@ -30,6 +31,9 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Subscriber;
+import rx.functions.Action1;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {
@@ -48,24 +52,82 @@ public class MainActivity extends Activity {
     private final String TAG="MainActivity";
     private PhotoRecyclerAdapter photoRecyclerAdapter;
     private MainPresenter mainPresenter;
+    private Context context;
+    private List url;
+    private boolean isMoreLoad=false;
+
+
+    public boolean isMoreLoad() {
+        return isMoreLoad;
+    }
+
+    public void setIsMoreLoad(boolean isMoreLoad) {
+        this.isMoreLoad = isMoreLoad;
+    }
+
+    @AfterViews
+    void init(){
+        context=this;
+
+    }
 
     @AfterViews
     void ininPresenter(){
-        if(mainPresenter==null) mainPresenter=new MainPresenter();
+        if(mainPresenter==null) mainPresenter=new MainPresenter(this);
         mainPresenter.takeView(this);
+        mainPresenter.init();
     }
 
     @AfterViews
     void  initMeiZiList(){
-        photoRecyclerAdapter=new PhotoRecyclerAdapter(this,new ArrayList<String>());
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
+        url=new ArrayList();
+        url.add("assets://default.jpg");
+        photoRecyclerAdapter=new PhotoRecyclerAdapter(this,url);
+        final StaggeredGridLayoutManager gridLayoutManager=new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL);
+        recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(photoRecyclerAdapter);
-        mainPresenter.initRecycler();
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                Log.i(TAG, "onScrolled "+isMoreLoad);
+                if(!isMoreLoad) {
+
+//                    Log.i(TAG, "onScrolled " + dx + "  " + dy);
+                    int[] visibleItems = gridLayoutManager.findLastVisibleItemPositions(null);
+                    int lastItem = Math.max(visibleItems[0], visibleItems[1]);
+                    if (dy > 0 && lastItem > photoRecyclerAdapter.getItemCount() - 5){
+                        isMoreLoad=true;
+                        mainPresenter.refreshMore();
+                        Log.i(TAG, "onScrolled "+"到底");
+                    }
+
+                }
+
+//                if (((PhotoRecyclerAdapter) recyclerView.getAdapter()).isBottom()) {
+//                    Log.i(TAG, "onScrolled ");
+//                    //加载更多
+//                    if(!isMore) {
+//                        Log.i(TAG, "onScrolled "+isMore);
+//                        isMore=true;
+//                        mainPresenter.refreshMore();
+//                    }
+////                    ((PhotoRecyclerAdapter) recyclerView.getAdapter()).setBottom(false);
+//                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+//                Log.i(TAG, "onScrollStateChanged "+newState);
+            }
+        });
+
     }
 
     @AfterViews
     void initSwipRefresh(){
-        Log.i(TAG, "initSwipRefresh " + Thread.currentThread().getName());
+//        Log.i(TAG, "initSwipRefresh " + Thread.currentThread().getName());
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.actionbar_color));
         swipeRefreshLayout.setOnRefreshListener(new RefreshListener());
     }
@@ -160,6 +222,7 @@ public class MainActivity extends Activity {
                         Intent rateIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(appUrl));
                         startActivity(rateIntent);
                         break;
+
                 }
 
             }
@@ -169,25 +232,109 @@ public class MainActivity extends Activity {
 
     }
 
+
+
+
+    public long getUrlCount() {
+        return photoRecyclerAdapter.getItemCount();
+    }
+
+
+    //下拉刷新监听
     private class RefreshListener implements MySwipeRefreshLayout.OnRefreshListener{
         @Override
         public void onRefresh() {
-            mainPresenter.refreshUrl();
+            mainPresenter.pullToRefresh();
         }
     }
 
 
+    //替换adapter中的url list
+    public Subscriber<List> replaceRecycleSubscriber=new Subscriber<List>() {
+        @Override
+        public void onCompleted() {
+        }
 
-    @MainThread
-    public void setRecyclerViewAdapter(List list){
-        Log.i(TAG, "setRecyclerViewAdapter "+Thread.currentThread().getName());
-        photoRecyclerAdapter.addView(list);
+        @Override
+        public void onError(Throwable e) {
+            Log.i(TAG, "onError "+e.toString());
+        }
+
+        @Override
+        public void onNext(List list) {
+            photoRecyclerAdapter.replaceView(list);
+        }
+    };
+
+    //向adapter添加item
+    public Subscriber<String> addRecyclerItemSubscriber=new Subscriber<String>() {
+        @Override
+        public void onCompleted() {
+            isMoreLoad=false;
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.i(TAG, "onError "+e.toString());
+        }
+
+        @Override
+        public void onNext(String s) {
+            Log.i(TAG, "onNext " + s);
+            photoRecyclerAdapter.addBottomView(s);
+        }
+    };
+
+    //向Adapter添加List
+   public Subscriber<List> addRecyclerListSubscriber=new Subscriber<List>(){
+       @Override
+       public void onCompleted() {
+           isMoreLoad=false;
+           Log.i(TAG, "onCompleted "+"addRecyclerListSubscriber");
+       }
+
+       @Override
+       public void onError(Throwable e) {
+           Log.i(TAG, "onError "+e.toString());
+//           Toast.makeText(context, "加载失败", Toast.LENGTH_SHORT);
+       }
+
+       @Override
+       public void onNext(List list) {
+           photoRecyclerAdapter.addBottomView(list);
+
+       }
+   };
+
+
+    public void setBottom(boolean param){
+        photoRecyclerAdapter.setBottom(false);
+    }
+    public Action1 closeSwipRefershLayout =new Action1(){
+        @Override
+        public void call(Object o) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    };
+
+    public Action1<String> mainToast=new Action1<String>() {
+        @Override
+        public void call(String s) {
+            Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT).show();
+        }
+    };
+
+
+
+    private void setRecyclerViewAdapter(List list){
+        Log.i(TAG, "setRecyclerViewAdapter " + Thread.currentThread().getName());
+        photoRecyclerAdapter.addBottomView(list);
     }
 
 
 
-    @MainThread
-    public void closeSwipeRefreshLayout(){
+
+    private void closeSwipeRefreshLayout(){
         swipeRefreshLayout.setRefreshing(false);
     }
 

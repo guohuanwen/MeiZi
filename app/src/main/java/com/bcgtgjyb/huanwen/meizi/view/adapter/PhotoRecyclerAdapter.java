@@ -8,24 +8,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.bcgtgjyb.huanwen.meizi.view.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-
 import java.util.List;
 
 /**
  * Created by huanwen on 2015/9/4.
  */
 public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    private boolean bottom=false;
     private final String TAG="PhotoRecyclerAdapter";
     private Context context;
     private final LayoutInflater layoutInflater;
     private ImageLoader imageLoader;
     private List list;
     DisplayImageOptions options;
+
+    public enum Type{
+        Foot,Item
+    }
+
     public PhotoRecyclerAdapter(Context context,List list) {
         this.context=context;
         layoutInflater=LayoutInflater.from(context);
@@ -37,9 +41,39 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         imageLoader=ImageLoader.getInstance();
     }
 
+
+
+
+    public boolean isBottom() {
+        return bottom;
+    }
+
+    public void setBottom(boolean bottom) {
+        this.bottom = bottom;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(position==list.size()){
+            bottom=true;
+            return Type.Foot.ordinal();
+        }
+        else {
+            return Type.Item.ordinal();
+        }
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new PhotoHolder(layoutInflater.inflate(R.layout.meizi_photo,parent,false),this);
+        if(viewType==Type.Foot.ordinal()){
+            if(list.size()!=0) {
+                return new FootHolder(layoutInflater.inflate(R.layout.recycle_foot, parent, false));
+            }
+        }
+        if(viewType==Type.Item.ordinal()) {
+            return new PhotoHolder(layoutInflater.inflate(R.layout.meizi_photo, parent, false), this);
+        }
+        return null;
     }
 
 //    "http://site.com/image.png" // from Web
@@ -51,32 +85,52 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 //            "drawable://" + R.drawable.img // from drawables (non-9patch images)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final ImageView imageView=((PhotoHolder) holder).imageView;
-        Log.i(TAG, "onBindViewHolder " + (String) list.get(position));
-        imageLoader.displayImage((String) list.get(position), imageView,options);
-        imageLoader.loadImage((String) list.get(position), new SimpleImageLoadingListener() {
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                // Do whatever you want with Bitmap
+
+        if(holder instanceof PhotoHolder) {
+            final ImageView imageView = ((PhotoHolder) holder).imageView;
+            imageLoader.displayImage((String) list.get(position), imageView, options);
+            imageLoader.loadImage((String) list.get(position), new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    // Do whatever you want with Bitmap
 //                imageView.setImageBitmap(loadedImage);
 
-            }
-        });
+                }
+            });
+            bottom=false;
+        }
+        if(holder instanceof FootHolder){
+            bottom=true;
+        }
     }
 
     public void deleteView(){
 
     }
 
-    public void addView(List url){
-        list.clear();
-        list=url;
-        notifyItemInserted(0);
+
+
+    public void replaceView(List list){
+        this.list.clear();
+        this.list=list;
+        notifyDataSetChanged();
+    }
+
+    public void addBottomView(List url){
+        for(Object obj:url){
+            addBottomView((String)obj);
+        }
+    }
+
+    public void addBottomView(String url){
+        Log.i(TAG, "addBottomView "+url);
+        list.add(list.size()-1,url);
+        notifyItemChanged(list.size()-1);
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list.size()+1;
     }
 
     public class PhotoHolder extends RecyclerView.ViewHolder{
@@ -85,5 +139,15 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             super(itemView);
             imageView=(ImageView)itemView.findViewById(R.id.imageView);
         }
+    }
+
+    private class FootHolder extends RecyclerView.ViewHolder{
+        public FootHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public interface Refresh{
+        void loading(List list);
     }
 }

@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 public class ReadAssetsText {
     private Context context;
     private final String TAG="ReadAssetsText";
+//    private MyApplication myApplication=MyApplication.getInstence();
     public ReadAssetsText() {
         this.context=MyApplication.getContext();
     }

@@ -7,6 +7,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by huanwen on 2015/9/5.
@@ -14,10 +15,14 @@ import java.io.IOException;
 public class HttpRequest {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private final String TAG="HttpRequest";
-    OkHttpClient client;
+    private OkHttpClient client;
 
     public HttpRequest() {
         client=new OkHttpClient();
+        //设置超时
+        client.setConnectTimeout(20, TimeUnit.SECONDS);
+        client.setWriteTimeout(20,TimeUnit.SECONDS);
+        client.setReadTimeout(30,TimeUnit.SECONDS);
     }
 
     public String httpGet(String url) throws IOException {

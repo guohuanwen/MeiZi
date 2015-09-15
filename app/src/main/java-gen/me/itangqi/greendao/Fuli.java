@@ -26,6 +26,7 @@ public class Fuli {
     /** Not-null value. */
     private String updatedAt;
     private long nextId;
+    private long count;
 
     public Fuli() {
     }
@@ -34,7 +35,7 @@ public class Fuli {
         this.id = id;
     }
 
-    public Fuli(Long id, String who, String publishedAt, String desc, String type, String url, String used, String objectId, String createdAt, String updatedAt, long nextId) {
+    public Fuli(Long id, String who, String publishedAt, String desc, String type, String url, String used, String objectId, String createdAt, String updatedAt, long nextId, long count) {
         this.id = id;
         this.who = who;
         this.publishedAt = publishedAt;
@@ -46,6 +47,7 @@ public class Fuli {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.nextId = nextId;
+        this.count = count;
     }
 
     public Long getId() {
@@ -152,6 +154,14 @@ public class Fuli {
 
     public void setNextId(long nextId) {
         this.nextId = nextId;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 
 }
