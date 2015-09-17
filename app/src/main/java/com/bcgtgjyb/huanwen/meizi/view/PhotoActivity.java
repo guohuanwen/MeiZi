@@ -27,7 +27,10 @@ public class PhotoActivity extends Activity{
         Intent intent=getIntent();
         if(intent!=null){
             String url=intent.getStringExtra("url");
-            Glide.with(this).load(url).into(photoView);
+            Glide.with(this).load(url)
+                    .fitCenter()
+//                    .crossFade()
+                    .into(photoView);
 //            imageLoader.loadImage(url,new SimpleImageLoadingListener(){
 //                @Override
 //                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {

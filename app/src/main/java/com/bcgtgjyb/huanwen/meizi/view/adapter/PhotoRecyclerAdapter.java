@@ -103,7 +103,12 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                     adaptherListener.photoIntent((String) list.get(count));
                 }
             });
-            Glide.with(context).load((String) list.get(position)).into(imageView);
+//            DiskLruCache diskLruCache=;
+            Glide.with(context).load((String) list.get(position))
+                    .fitCenter()
+//                    .placeholder(R.drawable.place60)
+//                    .crossFade()
+                    .into(imageView);
 
 //            imageLoader.displayImage((String) list.get(position), imageView, options);
 //            String url=imageLoader.getLoadingUriForView(imageView);

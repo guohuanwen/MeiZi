@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.bcgtgjyb.huanwen.meizi.view.adapter.PhotoRecyclerAdapter;
 import com.bcgtgjyb.huanwen.meizi.view.presenter.MainPresenter;
 import com.bcgtgjyb.huanwen.meizi.view.widget.MySwipeRefreshLayout;
+import com.bumptech.glide.Glide;
 import com.ikimuhendis.ldrawer.ActionBarDrawerToggle;
 import com.ikimuhendis.ldrawer.DrawerArrowDrawable;
 
@@ -105,9 +107,8 @@ public class MainActivity extends Activity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                Log.i(TAG, "onScrolled " + isMoreLoad);
+//                Log.i(TAG, "onScrolled " + isMoreLoad);
                 if (!isMoreLoad) {
-
 //                    Log.i(TAG, "onScrolled " + dx + "  " + dy);
                     int[] visibleItems = gridLayoutManager.findLastVisibleItemPositions(null);
                     int lastItem = Math.max(visibleItems[0], visibleItems[1]);
@@ -134,7 +135,7 @@ public class MainActivity extends Activity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-//                Log.i(TAG, "onScrollStateChanged "+newState);
+//                Log.i(TAG, "onScrollStateChanged " + newState);
             }
         });
 
@@ -247,6 +248,26 @@ public class MainActivity extends Activity {
 
     }
 
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.i(TAG, "dispatchTouchEvent ");
+        switch (ev.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                Glide.with(this).pauseRequests();
+                break;
+            case MotionEvent.ACTION_UP:
+                Glide.with(this).resumeRequests();
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.i(TAG, "onTouchEvent ");
+        return super.onTouchEvent(event);
+    }
 
     public Context getContext(){
         return this;
