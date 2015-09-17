@@ -107,6 +107,7 @@ public class MainPresenter {
                         Observable.just("无网络连接")
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(view.mainToast);
+                        Observable.just("").observeOn(AndroidSchedulers.mainThread()).subscribe(view.closeSwipRefershLayout);
                     }
 
                     @Override

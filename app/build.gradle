@@ -60,4 +60,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'com.github.bumptech.glide:glide:3.6.1'
     //    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.bm.photoview:library:2.0.5'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile 'com.android.support:support-v4:23.0.0'
 }

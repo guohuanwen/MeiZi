@@ -1,17 +1,18 @@
 package com.bcgtgjyb.huanwen.meizi.view.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.bcgtgjyb.huanwen.meizi.view.R;
+import com.bumptech.glide.Glide;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
 import java.util.List;
 
 /**
@@ -25,6 +26,9 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private ImageLoader imageLoader;
     private List list;
     DisplayImageOptions options;
+    private AdaptherListener adaptherListener;
+
+
 
     public enum Type{
         Foot,Item
@@ -50,6 +54,10 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public void setBottom(boolean bottom) {
         this.bottom = bottom;
+    }
+
+    public void setAdaptherListener(AdaptherListener adaptherListener){
+        this.adaptherListener=adaptherListener;
     }
 
     @Override
@@ -88,15 +96,28 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         if(holder instanceof PhotoHolder) {
             final ImageView imageView = ((PhotoHolder) holder).imageView;
-            imageLoader.displayImage((String) list.get(position), imageView, options);
-            imageLoader.loadImage((String) list.get(position), new SimpleImageLoadingListener() {
+            final int count=position;
+            imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    // Do whatever you want with Bitmap
-//                imageView.setImageBitmap(loadedImage);
-
+                public void onClick(View view) {
+                    adaptherListener.photoIntent((String) list.get(count));
                 }
             });
+            Glide.with(context).load((String) list.get(position)).into(imageView);
+
+//            imageLoader.displayImage((String) list.get(position), imageView, options);
+//            String url=imageLoader.getLoadingUriForView(imageView);
+//            imageLoader.loadImage((String) list.get(position),imageView,new SimpleImageLoadingListener() {
+//                @Override
+//                  public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+//                    // Do whatever you want with Bitmap
+//                    ((ImageView)view).setImageBitmap(loadedImage);
+////                    Log.i(TAG, "onLoadingComplete "+imageUri);
+//
+//                }
+
+
+//            });
             bottom=false;
         }
         if(holder instanceof FootHolder){
@@ -135,9 +156,10 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public class PhotoHolder extends RecyclerView.ViewHolder{
         private ImageView imageView;
-        public PhotoHolder(View itemView,PhotoRecyclerAdapter photoRecyclerAdapter) {
+        public PhotoHolder(final View itemView,PhotoRecyclerAdapter photoRecyclerAdapter) {
             super(itemView);
             imageView=(ImageView)itemView.findViewById(R.id.imageView);
+
         }
     }
 
@@ -147,7 +169,8 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    public interface Refresh{
+    public interface AdaptherListener{
         void loading(List list);
+        void photoIntent(String photo);
     }
 }

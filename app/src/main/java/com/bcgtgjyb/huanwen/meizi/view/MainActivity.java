@@ -83,6 +83,21 @@ public class MainActivity extends Activity {
         url=new ArrayList();
         url.add("assets://default.jpg");
         photoRecyclerAdapter=new PhotoRecyclerAdapter(this,url);
+        photoRecyclerAdapter.setAdaptherListener(new PhotoRecyclerAdapter.AdaptherListener(){
+            @Override
+            public void loading(List list) {
+
+            }
+
+            @Override
+            public void photoIntent(String photo) {
+                Intent intent=new Intent(MainActivity.this,PhotoActivity_.class);
+                intent.putExtra("url",photo);
+                startActivity(intent);
+            }
+        });
+
+
         final StaggeredGridLayoutManager gridLayoutManager=new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(photoRecyclerAdapter);
@@ -90,16 +105,16 @@ public class MainActivity extends Activity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                Log.i(TAG, "onScrolled "+isMoreLoad);
-                if(!isMoreLoad) {
+                Log.i(TAG, "onScrolled " + isMoreLoad);
+                if (!isMoreLoad) {
 
 //                    Log.i(TAG, "onScrolled " + dx + "  " + dy);
                     int[] visibleItems = gridLayoutManager.findLastVisibleItemPositions(null);
                     int lastItem = Math.max(visibleItems[0], visibleItems[1]);
-                    if (dy > 0 && lastItem > photoRecyclerAdapter.getItemCount() - 5){
-                        isMoreLoad=true;
+                    if (dy > 0 && lastItem > photoRecyclerAdapter.getItemCount() - 5) {
+                        isMoreLoad = true;
                         mainPresenter.refreshMore();
-                        Log.i(TAG, "onScrolled "+"到底");
+                        Log.i(TAG, "onScrolled " + "到底");
                     }
 
                 }
@@ -232,6 +247,10 @@ public class MainActivity extends Activity {
 
     }
 
+
+    public Context getContext(){
+        return this;
+    }
 
 
 
