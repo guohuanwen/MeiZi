@@ -136,6 +136,11 @@ public class MainActivity extends Activity {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 //                Log.i(TAG, "onScrollStateChanged " + newState);
+                if(newState==0){
+                    Glide.with(getContext()).resumeRequests();
+                }else{
+                    Glide.with(getContext()).pauseRequests();
+                }
             }
         });
 
@@ -178,13 +183,8 @@ public class MainActivity extends Activity {
 
 
         String[] values = new String[]{
-                "Stop Animation (Back icon)",
-                "Stop Animation (Home icon)",
-                "Start Animation",
-                "Change Color",
-                "GitHub Page",
-                "Share",
-                "Rate"
+                "清除缓存"
+
         };
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -195,8 +195,10 @@ public class MainActivity extends Activity {
                                     int position, long id) {
                 switch (position) {
                     case 0:
+                        Glide.get(getContext()).clearDiskCache();
+                        Glide.get(getContext()).clearMemory();
                         mDrawerToggle.setAnimateEnabled(false);
-                        drawerArrow.setProgress(1f);
+                        Toast.makeText(MainActivity.this,"缓存已清理",Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
                         mDrawerToggle.setAnimateEnabled(false);

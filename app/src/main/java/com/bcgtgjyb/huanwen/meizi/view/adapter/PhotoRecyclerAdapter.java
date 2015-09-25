@@ -83,7 +83,6 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
         return null;
     }
-
 //    "http://site.com/image.png" // from Web
 //            "file:///mnt/sdcard/image.png" // from SD card
 //            "file:///mnt/sdcard/video.mp4" // from SD card (video thumbnail)
@@ -105,7 +104,7 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             });
 //            DiskLruCache diskLruCache=;
             Glide.with(context).load((String) list.get(position))
-                    .fitCenter()
+//                    .fitCenter()
 //                    .placeholder(R.drawable.place60)
 //                    .crossFade()
                     .into(imageView);
