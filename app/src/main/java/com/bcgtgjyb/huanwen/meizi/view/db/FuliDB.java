@@ -113,7 +113,7 @@ public class FuliDB {
         }
         return list;
     }
-//根据第几页查询数据库
+//根据第几页查询数据库 List<Stirng>
     public Observable<List> qureyUrlObservable(final int count){
         return Observable
                 .create(new Observable.OnSubscribe<List>() {
@@ -153,6 +153,8 @@ public class FuliDB {
 //                });
 
     }
+
+
 
 
 

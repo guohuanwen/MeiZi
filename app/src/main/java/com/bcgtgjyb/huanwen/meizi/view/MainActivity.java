@@ -2,11 +2,14 @@ package com.bcgtgjyb.huanwen.meizi.view;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import com.bcgtgjyb.huanwen.meizi.view.adapter.PhotoRecyclerAdapter;
 import com.bcgtgjyb.huanwen.meizi.view.presenter.MainPresenter;
+import com.bcgtgjyb.huanwen.meizi.view.service.MyService;
 import com.bcgtgjyb.huanwen.meizi.view.widget.MySwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.ikimuhendis.ldrawer.ActionBarDrawerToggle;
@@ -67,6 +71,12 @@ public class MainActivity extends Activity {
         this.isMoreLoad = isMoreLoad;
     }
 
+
+    @AfterViews
+    void startService(){
+        Intent intent=new Intent(MainActivity.this, MyService.class);
+        startService(intent);
+    }
     @AfterViews
     void init(){
         context=this;
@@ -183,8 +193,7 @@ public class MainActivity extends Activity {
 
 
         String[] values = new String[]{
-                "清除缓存"
-
+                "清除缓存","停止后台服务"
         };
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -201,8 +210,8 @@ public class MainActivity extends Activity {
                         Toast.makeText(MainActivity.this,"缓存已清理",Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
-                        mDrawerToggle.setAnimateEnabled(false);
-                        drawerArrow.setProgress(0f);
+                        stopService();
+                        Toast.makeText(MainActivity.this,"刷新服务已停止",Toast.LENGTH_SHORT).show();
                         break;
                     case 2:
                         mDrawerToggle.setAnimateEnabled(true);
@@ -381,6 +390,27 @@ public class MainActivity extends Activity {
     }
 
 
+    MyService.MyBinder binder=null;
+    public class MyServiceConn implements ServiceConnection{
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            binder=(MyService.MyBinder)service;
+        }
+
+        //服务被关闭回收
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    }
+
+
+    private void stopService(){
+        Intent intent=new Intent(MainActivity.this,MyService.class);
+        stopService(intent);
+    }
+
+
 
 
 
@@ -408,5 +438,14 @@ public class MainActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        if(binder!=null){
+//            unbindService();
+//        }
     }
 }

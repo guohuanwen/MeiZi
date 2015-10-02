@@ -4,7 +4,7 @@ def AAVersion = '3.3.2'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.0"
+    buildToolsVersion "23.0.1"
     defaultConfig {
         applicationId 'com.bcgtgjyb.huanwen.meizi.view'
         minSdkVersion 15

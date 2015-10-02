@@ -23,9 +23,9 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final String TAG="PhotoRecyclerAdapter";
     private Context context;
     private final LayoutInflater layoutInflater;
-    private ImageLoader imageLoader;
+//    private ImageLoader imageLoader;
     private List list;
-    DisplayImageOptions options;
+//    DisplayImageOptions options;
     private AdaptherListener adaptherListener;
 
 
@@ -38,11 +38,11 @@ public class PhotoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.context=context;
         layoutInflater=LayoutInflater.from(context);
         this.list=list;
-         options=new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .build();
-        imageLoader=ImageLoader.getInstance();
+//         options=new DisplayImageOptions.Builder()
+//                .cacheInMemory(true)
+//                .cacheOnDisk(true)
+//                .build();
+//        imageLoader=ImageLoader.getInstance();
     }
 
 

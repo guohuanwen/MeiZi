@@ -30,7 +30,7 @@ public class MyApplication extends Application{
     public void onCreate() {
         super.onCreate();
         context=getApplicationContext();
-        initImageLoad();
+//        initImageLoad();
     }
 
 //    public synchronized static MyApplication getInstence(){

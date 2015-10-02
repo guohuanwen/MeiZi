@@ -21,24 +21,7 @@ public class TestRefresh extends AndroidTestCase{
         httpFuliJson=new HttpFuliJson(getContext());
         fuliDB=FuliDB.getInstance(getContext());
 //        httpFuliJson.getFuliUrlSaveDB(1);
-        fuliDB.qureyUrlObservable(1)
-                .subscribe(new Subscriber<String>() {
-                    @Override
-                    public void onCompleted() {
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(String o) {
-                        Log.i(TAG, "onNext "+o);
-                    }
-                });
-//
     }
 
 //    public void testHttpFuliJson(){

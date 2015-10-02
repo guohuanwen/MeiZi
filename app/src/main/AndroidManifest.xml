@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".PhotoActivity_"/>
+        <service android:name=".service.MyService"/>
     </application>
 
 </manifest>

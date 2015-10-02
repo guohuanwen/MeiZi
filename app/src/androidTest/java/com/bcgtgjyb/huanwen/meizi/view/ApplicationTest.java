@@ -81,26 +81,26 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     public void testRefresh(){
         Log.i(TAG, "testRefresh "+getContext()+"   "+getApplication());
         MainPresenter mainPresenter=new MainPresenter(getApplication());
-        mainPresenter.fuliUrlObservable()
-                .observeOn(HandlerScheduler.from(mainPresenter.backgroundHandler))
-                .subscribeOn(HandlerScheduler.from(handler))
-                .subscribe(new Subscriber<List>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.i(TAG, "onCompleted");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError ");
-                    }
-
-                    @Override
-                    public void onNext(List list) {
-                        for(int i=0;i<list.size();i++){
-                            Log.i(TAG, "onNext "+list.get(i));
-                        }
-                    }
-                });
+//        mainPresenter.fuliUrlObservable()
+//                .observeOn(HandlerScheduler.from(mainPresenter.backgroundHandler))
+//                .subscribeOn(HandlerScheduler.from(handler))
+//                .subscribe(new Subscriber<List>() {
+//                    @Override
+//                    public void onCompleted() {
+//                        Log.i(TAG, "onCompleted");
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Log.i(TAG, "onError ");
+//                    }
+//
+//                    @Override
+//                    public void onNext(List list) {
+//                        for(int i=0;i<list.size();i++){
+//                            Log.i(TAG, "onNext "+list.get(i));
+//                        }
+//                    }
+//                });
     }
 }
