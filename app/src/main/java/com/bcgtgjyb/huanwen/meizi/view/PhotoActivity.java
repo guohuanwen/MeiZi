@@ -3,6 +3,7 @@ package com.bcgtgjyb.huanwen.meizi.view;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.bcgtgjyb.huanwen.meizi.view.tools.MyApplication;
 import com.bm.library.PhotoView;
 import com.bumptech.glide.Glide;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -27,9 +28,9 @@ public class PhotoActivity extends Activity{
         Intent intent=getIntent();
         if(intent!=null){
             String url=intent.getStringExtra("url");
-            Glide.with(this).load(url)
+            Glide.with(MyApplication.getContext()).load(url)
                     .fitCenter()
-//                    .crossFade()
+                    .crossFade()
                     .into(photoView);
 //            imageLoader.loadImage(url,new SimpleImageLoadingListener(){
 //                @Override

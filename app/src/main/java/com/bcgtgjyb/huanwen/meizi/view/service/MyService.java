@@ -8,21 +8,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.util.TimeUtils;
-
 import com.bcgtgjyb.huanwen.meizi.view.MainActivity_;
 import com.bcgtgjyb.huanwen.meizi.view.R;
 import com.bcgtgjyb.huanwen.meizi.view.bean.FuliDetil;
 import com.bcgtgjyb.huanwen.meizi.view.db.FuliDB;
 import com.bcgtgjyb.huanwen.meizi.view.net.HttpFuliJson;
+import com.bcgtgjyb.huanwen.meizi.view.net.NetWork;
 import com.bcgtgjyb.huanwen.meizi.view.tools.MyApplication;
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -44,7 +41,6 @@ public class MyService extends Service {
     private String dbNewUrl="";
     private Handler handler=new Handler();
     private Runnable runnable;
-
     private BroadcastReceiver mBroadcastReceiver=new CommandReceiver();
 
 
@@ -116,11 +112,12 @@ public class MyService extends Service {
                                 httpFuliJson.saveToDB(myList,1);
                                 sendNotification();
                             }
+                            NetWork.getInstance().setNet(true);
                         }
 
                         @Override
                         public void onError(Throwable e) {
-
+                           NetWork.getInstance().setNet(false);
                         }
 
                         @Override
@@ -152,7 +149,7 @@ public class MyService extends Service {
         NotificationManager notificationManager=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder build=new NotificationCompat.Builder(MyService.this)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("一个消息")
+                .setContentTitle("MeiZi")
                 .setContentText("一大波妹子来袭");
         //第一次提示消息的时候显示在通知栏上
         build.setTicker("新消息");
@@ -162,7 +159,7 @@ public class MyService extends Service {
         build.setWhen(System.currentTimeMillis());
         //添加通知声音，灯光等
         build.setDefaults(Notification.DEFAULT_VIBRATE);
-        //是否正在进行，如下载则设置为ture
+        //是否正在进行，如下载 则设置为ture
         build.setOngoing(false);
         Intent resultIntent =new Intent(MyService.this, MainActivity_.class);
         PendingIntent pendingIntent=PendingIntent.getActivity(this,0,resultIntent,0);
@@ -192,7 +189,7 @@ public class MyService extends Service {
     private class CommandReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
-            int run=intent.getIntExtra("run",0);
+            int run=intent.getIntExtra("run",-1);
 //            if(run==0){
 //                Log.d(TAG, "onReceive() called with: " + "context = [" + context + "], intent = [" + intent + "]");
 //                MyService.this.onDestroy();

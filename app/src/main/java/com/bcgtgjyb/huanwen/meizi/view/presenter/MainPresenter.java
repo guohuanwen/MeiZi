@@ -9,6 +9,7 @@ import com.bcgtgjyb.huanwen.meizi.view.MainActivity;
 import com.bcgtgjyb.huanwen.meizi.view.bean.FuliDetil;
 import com.bcgtgjyb.huanwen.meizi.view.db.FuliDB;
 import com.bcgtgjyb.huanwen.meizi.view.net.HttpFuliJson;
+import com.bcgtgjyb.huanwen.meizi.view.net.NetWork;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,7 @@ public class MainPresenter {
 
     //第一次初始化
     public void init(){
+        net= NetWork.getInstance().isNet();
         Log.i(TAG, "init "+fuliDB.getNoteCount());
         if(fuliDB.getNoteCount()==0){
             Observable.just("本地无数据,请下拉刷新")

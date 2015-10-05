@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.bcgtgjyb.huanwen.meizi.view.adapter.PhotoRecyclerAdapter;
 import com.bcgtgjyb.huanwen.meizi.view.presenter.MainPresenter;
 import com.bcgtgjyb.huanwen.meizi.view.service.MyService;
+import com.bcgtgjyb.huanwen.meizi.view.tools.MyApplication;
 import com.bcgtgjyb.huanwen.meizi.view.widget.MySwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.ikimuhendis.ldrawer.ActionBarDrawerToggle;
@@ -147,9 +148,9 @@ public class MainActivity extends Activity {
                 super.onScrollStateChanged(recyclerView, newState);
 //                Log.i(TAG, "onScrollStateChanged " + newState);
                 if(newState==0){
-                    Glide.with(getContext()).resumeRequests();
+                    Glide.with(MyApplication.getContext()).resumeRequests();
                 }else{
-                    Glide.with(getContext()).pauseRequests();
+                    Glide.with(MyApplication.getContext()).pauseRequests();
                 }
             }
         });
